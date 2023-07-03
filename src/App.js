@@ -5,15 +5,15 @@ import WidgetGalleryModal from './modals/WidgetGalleryModal';
 import Draggable from 'react-draggable';
 import TimerWidget from './widgets/TimerWidget';
 import CalendarWidget from './widgets/CalendarWidget';
-import TodoListWidget from './widgets/MyCustomWidget'
+import TodoListWidget from './widgets/MyCustomWidget';
 
  
 function App() {
  const [widgets, setWidgets] = useState([
   { id: new Date().getTime(), component: <ClockWidget />, area: 'main-widget', name: "Date and Time" },
   { id: new Date().getTime() + 2, component: <CalendarWidget />, area: 'right-widget', name: "Calendar" },
-  { id: new Date().getTime() + 1, component: <TimerWidget />, area: 'left-widget', name:"Timer" },
-  { id: new Date().getTime() + 3, component: <TodoListWidget />, area: 'main-widget', name:"Todo List" },
+  { id: new Date().getTime() + 1, component: <TimerWidget />, area: 'main-widget', name:"Timer" },
+  { id: new Date().getTime() + 3, component: <TodoListWidget />, area: 'left-widget', name:"Todo List" },
   
  ])
  const [showWidgetModal, setShowWidgetModal] = useState(false)
