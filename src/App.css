@@ -169,34 +169,3 @@ select {
   height: 100px; /* Adjust the height as needed */
 }
 
-.cell {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px; /* Adjust the width as needed */
-  height: 100px; /* Adjust the height as needed */
-  border: 1px solid black;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-.cell.X {
-  color: lightgreen;
-}
-
-.cell.O {
-  color: lightseagreen;
-}
-
-.status {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.reset-button {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #eaeaea;
-  border: none;
-  cursor: pointer;
-}

@@ -1,103 +1,154 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
-export default function TicTacToeWidget() {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [currentPlayer, setCurrentPlayer] = useState('X');
-  const [winner, setWinner] = useState(null);
-
-  const winningConditions = [
-    [0, 1, 2], // Top row
-    [3, 4, 5], // Middle row
-    [6, 7, 8], // Bottom row
-    [0, 3, 6], // Left column
-    [1, 4, 7], // Middle column
-    [2, 5, 8], // Right column
-    [0, 4, 8], // Diagonal from top-left to bottom-right
-    [2, 4, 6], // Diagonal from top-right to bottom-left
-  ];
-
-  const checkForWinner = () => {
-    for (let i = 0; i < winningConditions.length; i++) {
-      const [a, b, c] = winningConditions[i];
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
-      }
-    }
-    return null;
-  };
-
-  const handleCellClick = (index) => {
-    if (board[index] === null && winner === null) {
-      const newBoard = [...board];
-      newBoard[index] = currentPlayer;
-      setBoard(newBoard);
-
-      const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      setCurrentPlayer(nextPlayer);
-
-      const winner = checkForWinner();
-      if (winner) {
-        setWinner(winner);
-      }
-    }
-  };
-
-const renderCell = (index) => {
-    const cellValue = board[index];
-    const cellClassName = cellValue ? `item cell ${cellValue}` : 'item cell';
-    return (
-      <div className={cellClassName} onClick={() => handleCellClick(index)}>
-        {cellValue}
+const TaskItem = React.memo(({ task, index, handleToggleTask, handleEditTask, handleDeleteTask }) => {
+  return (
+    <li className={`task-item ${task.completed ? 'completed' : ''}`}>
+      <span className="task-text" onClick={() => handleToggleTask(index)}>
+        {task.text}
+      </span>
+      <div className="task-actions">
+        {!task.completed ? (
+          <button className="toggle-button" onClick={() => handleToggleTask(index)}>
+            <i className="fas fa-check"></i>
+          </button>
+        ) : (
+          <button className="toggle-button-completed" onClick={() => handleToggleTask(index)}>
+            <i className="fas fa-check"></i>
+          </button>
+        )}
+        <button className="edit-button" onClick={() => handleEditTask(index)}>
+          <i className="fas fa-edit"></i>
+        </button>
+        <button className="delete-button" onClick={() => handleDeleteTask(index)}>
+          <i className="fas fa-trash"></i>
+        </button>
       </div>
-    );
+    </li>
+  );
+});
+
+export default function TodoListWidget() {
+  const [tasks, setTasks] = useState([]);
+  const [taskInput, setTaskInput] = useState('');
+  const [editIndex, setEditIndex] = useState(-1);
+  const [showCompleted, setShowCompleted] = useState(false);
+
+  const handleTaskInputChange = useCallback((event) => {
+    setTaskInput(event.target.value);
+  }, []);
+
+  const handleAddTask = useCallback(() => {
+    if (taskInput.trim() !== '') {
+      setTasks((prevTasks) => {
+        const updatedTasks = editIndex !== -1 ? [...prevTasks] : [{ text: taskInput, completed: false }, ...prevTasks];
+
+        if (editIndex !== -1) {
+          updatedTasks[editIndex] = { ...updatedTasks[editIndex], text: taskInput };
+        }
+
+        setTaskInput('');
+        setEditIndex(-1); // Reset the editIndex to -1 when adding a new task
+
+        return updatedTasks;
+      });
+    }
+  }, [taskInput, editIndex]);
+
+  const handleResetTasks = useCallback(() => {
+    setTasks([]);
+    setEditIndex(-1);
+  }, []);
+
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'Enter') {
+      handleAddTask();
+    }
+  }, [handleAddTask]);
+
+  const handleToggleTask = useCallback((index) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = [...prevTasks];
+      updatedTasks[index] = {
+        ...updatedTasks[index],
+        completed: !updatedTasks[index].completed,
+      };
+
+      return updatedTasks;
+    });
+  }, []);
+
+  const handleDeleteTask = useCallback((index) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = [...prevTasks];
+      updatedTasks.splice(index, 1);
+      return updatedTasks;
+    });
+  }, []);
+
+  const handleEditTask = useCallback((index) => {
+    const taskToEdit = tasks[index];
+    setTaskInput(taskToEdit.text);
+    setEditIndex(index);
+  }, [tasks]);
+
+  const handleToggleShowCompleted = useCallback(() => {
+    setShowCompleted((prevShowCompleted) => !prevShowCompleted);
+  }, []);
+  const getTotalTaskCount = () => {
+    return tasks.length;
+  };
+  const getCompletedTaskCount = () => {
+    return tasks.filter((task) => task.completed).length;
   };
 
-  const resetGame = () => {
-    setBoard(Array(9).fill(null));
-    setCurrentPlayer('X');
-    setWinner(null);
-  };
-
-  let status;
-  if (winner) {
-    status = `Winner: ${winner}`;
-  } else if (board.every((cell) => cell !== null)) {
-    status = "It's a draw!";
-  } else {
-    status = `Current Player: ${currentPlayer}`;
-  }
+  const filteredTasks = showCompleted ? tasks : tasks.filter((task) => !task.completed);
 
   return (
-    <div className="widget-container">
-      <div className="board">
-        <div className="board-row">
-          {renderCell(0)}
-          {renderCell(1)}
-          {renderCell(2)}
-        </div>
+    <div className="todo-list-widget">
+      <h2>Todo List</h2>
+     
+      <div className="task-input">
+        <input
+          type="text"
+          placeholder="Enter a task"
+          value={taskInput}
+          onChange={handleTaskInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <button onClick={handleAddTask}>{editIndex !== -1 ? 'Update' : 'Add'}</button>
       </div>
-      <div className="board">
-        <div className="board-row">
-          {renderCell(3)}
-          {renderCell(4)}
-          {renderCell(5)}
-        </div>
+      <p>Total Tasks: {getTotalTaskCount()}</p>
+      <br></br>
+        <p>Completed Tasks: {getCompletedTaskCount()}</p>
+      
+      <div className="toggle-completed-tasks">
+        <input
+          type="checkbox"
+          checked={showCompleted}
+          onChange={handleToggleShowCompleted}
+          id="toggle-completed"
+        />
+        <label htmlFor="toggle-completed">Show Completed Tasks</label>
       </div>
-      <div className="board">
-        <div className="board-row">
-          {renderCell(6)}
-          {renderCell(7)}
-          {renderCell(8)}
-        </div>
+      <div className="task-list-container">
+      <ul className="task-list">
+        {filteredTasks.map((task, index) => (
+          <TaskItem
+            key={index}
+            task={task}
+            index={index}
+            handleToggleTask={handleToggleTask}
+            handleEditTask={handleEditTask}
+            handleDeleteTask={handleDeleteTask}
+          />
+        ))}
+      </ul>
       </div>
-      <div className="status">{status}</div>
-      <button className="reset-button" onClick={resetGame}>
-        Reset Game
-      </button>
-     </div>
-    
+      <div className="reset-button-container">
+        <button className="reset-button" onClick={handleResetTasks}>
+          Reset Tasks
+        </button>
+      </div>
+    </div>
   );
-  
 }
-
-
