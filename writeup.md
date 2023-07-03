@@ -1,7 +1,8 @@
 # Planner App (MyCustomWidget) 
 - Todo List Widget
 
-I have added a custom widget to the Planner App, which is a Todo List Widget. Here's the rationale behind choosing the Todo List Widget:
+I have added a custom widget to the Planner App, which is a Todo List Widget. 
+Here's the rationale behind choosing the Todo List Widget:
 
 Organization and Task Management:
 - The Todo List Widget provides users with a convenient way to manage their tasks and stay organized within the planner app. It allows users to create, update, and track their tasks effectively.
@@ -19,8 +20,7 @@ Personalization and Customization:
 - The Todo List Widget allows users to personalize their planner app experience by customizing their task lists. Users can add, edit, and delete tasks based on their specific needs and preferences.
 
 
-
-# How the Todo List Widget works:
+## How the Todo List Widget works:
 
 1. Task Management:
    - The widget starts with an empty task list.
@@ -47,6 +47,7 @@ Personalization and Customization:
    - The `handleResetTasks` function is called to reset the task list, clear the input field, and update the task counts accordingly.
 
 By providing task management functionality, task display and styling, task counts and completion tracking, task filtering, and reset functionality, the Todo List Widget offers a comprehensive and user-friendly tool for organizing and managing tasks within the Planner App.
+
 
 ## Code Structure
 
